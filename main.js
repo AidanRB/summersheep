@@ -2,18 +2,28 @@
 /// <reference path="./p5.global-mode.d.ts" />
 
 function setup() {
-    //getAudioContext().suspend();
+    // getAudioContext().suspend();
     createCanvas(innerWidth, innerHeight - 5);
 }
 
 function draw() {
     background(54, 173, 136);
-    textAlign(CENTER);
-    fill("white");
-    textSize(36);
-    text("Hello world!", width / 2, height / 2);
-
+    
     drawSprites();
+    
+    fill("white");
+    var greeting = "Hello world!";
+    hello(greeting);
+
+    /**
+     * shows text
+     * @param {string} textToShow the message
+     */
+    function hello(textToShow) {
+        textAlign(CENTER);
+        textSize(36);
+        text(textToShow, width / 2, height / 2);
+    }
 }
 
 function mousePressed() {

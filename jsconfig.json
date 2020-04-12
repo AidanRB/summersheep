@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "checkJs": true
+  },
+  "include": [
+    "libraries/*",
+    "main.js"
+  ],
+  "exclude": [
+    "tmp/*"
+  ]
+}
