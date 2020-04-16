@@ -57,7 +57,7 @@ function draw() {
         }
 
         // Remove dead players
-        if (player.position.y > 1000) {
+        if (player.position.y > height) {
             player.remove();
         }
     }
