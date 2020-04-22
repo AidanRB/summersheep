@@ -12,10 +12,10 @@ let rights
 let player
 let canvas
 let showMXY
-let MAX_SPEED = 15
-let GRAVITY = 0.4
-let JUMP = 10
-
+let MAX_SPEED = 10
+var GRAVITY = 0.7
+let JUMP = 15
+var labelTimeout = 0
 
 
 function setup() {
@@ -37,7 +37,8 @@ function setup() {
     newBlock(500, 500, 300, 30)
     newBlock(770, 300, 30, 300)
     newBlock(700, 400, 30, 30)
-    
+    newBlock(60, 30, width - 90, 30)
+
     player = createSprite(100, 400, 30, 30)
 }
 
@@ -51,16 +52,28 @@ function draw() {
             // Jump
             player.velocity.y = -JUMP
             player.position.y = player.position.y - 1
-        }
-        else {
+        } else {
             // Stop on ground
             player.velocity.y = 0
         }
         console.log("top")
-    }
-    else {
+    } else {
         // Gravity
         player.velocity.y += GRAVITY
+        /*if (player.velocity.y >= 100) {
+            player.velocity = 0
+            labelTimeout = frameCount + 120
+            player.remove()
+        }*/
+        if (player.position.x >= width - 60) {
+            player.velocity.x = 0
+        }
+    }
+
+    if (frameCount < labelTimeout) {
+        text("u are exploded", player.position.x, height / 2)
+    } else if (frameCount == labelTimeout) {
+        player = createSprite(100, 400, 30, 30)
     }
 
     if (player.collide(bottoms) && player.velocity.y < 0) {
@@ -89,11 +102,9 @@ function draw() {
 
     // Reset dead player
     if (player.position.y > height) {
-        //player.remove()
-        player.position.x = 100
-        player.position.y = 400
-        player.velocity.x = 0
-        player.velocity.y = 0
+        player.position.y = 0
+    } else if (player.position.y < 0) {
+        player.position.y = height
     }
 
     drawSprites()
@@ -108,7 +119,14 @@ function draw() {
     if (showMXY) text(str(mouseX) + ", " + str(mouseY), mouseX, mouseY)
 }
 
-
+function keyTyped() {
+    if (key === ' ') {
+        var temp = bottoms
+        bottoms = tops
+        tops = temp
+        GRAVITY = -(GRAVITY)
+    }
+}
 
 function MXYon() {
     showMXY = true
@@ -147,3 +165,22 @@ function displayDebug(array) {
         text(str(array[i]), 8, 20 * (i + 1))
     }
 }
+
+// function keyPressed() {
+//     var setSpeed = false;
+//     if (keyCode == LEFT_ARROW) {
+//         speed--
+//         setSpeed = true
+//     } else if (keyCode == RIGHT_ARROW) {
+//         speed++
+//         setSpeed = true
+//     }
+
+//     if (setSpeed) {
+//         angle = 0
+//         if (speed < 0) angle = 180
+//         for (var sprite of getSprites()) {
+//             sprite.setSpeed(abs(speed), angle);
+//         }
+//     }
+// }
