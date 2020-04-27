@@ -8,6 +8,7 @@ let tops
 let bottoms
 let lefts
 let rights
+let enemies
 //let players
 let player
 let canvas
@@ -30,6 +31,7 @@ function setup() {
     bottoms = new Group()
     lefts = new Group()
     rights = new Group()
+    enemies = new Group()
     //players = new Group()
     showMXY = false
 
@@ -46,7 +48,7 @@ function setup() {
 
     player = createSprite(100, 400, 30, 30)
     player_image = loadImage('images/sheep.png')
-    player.addImage(player_image)
+    //player.addImage(player_image)
 }
 
 
@@ -83,6 +85,7 @@ function draw() {
         player.velocity.y = 0
         console.log("bottom")
     }
+    player.collide(blocks)
 
 
     // Move players with arrow keys
@@ -120,17 +123,69 @@ function draw() {
         player.velocity.x = 0
         player.velocity.y = 0
     }
+    
+    for (let enemy of enemies) {
+        if (player.position.x < enemy.position.x) enemy.velocity.x = -2
+        if (player.position.x > enemy.position.x) enemy.velocity.x = 2
+        
+        if (enemy.collide(tops) && enemy.velocity) {
+            if (player.position.y < enemy.position.y) {
+                // Jump
+                enemy.velocity.y = -JUMP
+                enemy.position.y = enemy.position.y - 1
+            }
+            else if (enemy.velocity.y > 0 && !enemy.collide(lefts) && !enemy.collide(rights)) {
+                // Stop on ground
+                enemy.velocity.y = 0
+            }
+            //console.log("top")
+        }
+        else {
+            // Gravity
+            enemy.velocity.y += GRAVITY / 2
+        }
+        
+        if (enemy.collide(lefts) && enemy.velocity.x > 0) {
+            enemy.velocity.x = 0
+            //console.log("left")
+        }
+        if (enemy.collide(rights) && enemy.velocity.x < 0) {
+            enemy.velocity.x = 0
+            //console.log("right")
+        }
+        if (enemy.collide(bottoms) && enemy.velocity.y < 0 && !enemy.collide(lefts) && !enemy.collide(rights)) {
+            enemy.velocity.y = 0
+            //console.log("bottom")
+        }
+        enemy.collide(blocks)
+        
+        if (enemy.position.y > height) {
+            enemy.remove()
+        }
+    }
+
+    enemies.collide(enemies)
+    if (enemies.collide(player)) {
+        player.position.x = 100
+        player.position.y = 400
+        player.velocity.x = 0
+        player.velocity.y = 0
+        background(255, 0, 0)
+    }
 
     drawSprites()
 
+    textFont("mono")
+    
     var debug = []
     debug.push(round(getFrameRate()))
     debug.push(str(round(player.position.x)) + ", " + str(round(player.position.y)))
     debug.push(str(round(player.velocity.x)) + ", " + str(round(player.velocity.y)))
     debug.push(MAX_SPEED)
-
+    debug.push(str(enemies.length))
+    
     displayDebug(debug)
-
+    
     if (showMXY) text(str(mouseX) + ", " + str(mouseY), mouseX, mouseY)
     for (coord of debugCoords) {
         text(str(coord[0]) + ", " + str(coord[1]), coord[0], coord[1])
@@ -141,6 +196,8 @@ function draw() {
 
 function mousePressed() {
     //debugCoords.push([mouseX, mouseY]);
+    let enemy = createSprite(mouseX, mouseY, 10, 10)
+    enemy.addToGroup(enemies)
 }
 
 function MXYon() {
@@ -158,8 +215,8 @@ function MXYoff() {
  * @param {number} h
  */
 function newBlock(x, y, w, h) {
-    // let block = createSprite(x + (w / 2), y + (h / 2), w, h)
-    // block.addToGroup(blocks)
+    let block = createSprite(x + (w / 2), y + (h / 2), w, h)
+    block.addToGroup(blocks)
     let top = createSprite(x + (w / 2), y, w - 1, 1)
     top.addToGroup(tops)
     let bottom = createSprite(x + (w / 2), y + h, w - 1, 1)
