@@ -47,8 +47,10 @@ function setup() {
     newBlock(700, 400, 30, 30)
 
     player = createSprite(100, 400, 30, 30)
-    player_image = loadImage('images/sheep.png')
-    //player.addImage(player_image)
+    sheep_walking_right = loadAnimation('images/sheep/sheeprun001.png', 'images/sheep/sheeprun008.png')
+    sheep_standing = loadAnimation('images/sheep/sheeprun001.png')
+    player.addAnimation('walking', sheep_walking_right)
+    player.addAnimation('still', sheep_standing)
 }
 
 
@@ -89,11 +91,20 @@ function draw() {
 
 
     // Move players with arrow keys
-    if (keyDown(LEFT_ARROW) && player.velocity.x <= 0 && player.velocity.x > -MAX_SPEED) player.velocity.x -= 1
-    else if (keyDown(RIGHT_ARROW) && player.velocity.x >= 0 && player.velocity.x < MAX_SPEED) player.velocity.x += 1
+    if (keyDown(LEFT_ARROW) && player.velocity.x <= 0 && player.velocity.x > -MAX_SPEED) {
+        player.velocity.x -= 1
+        player.changeAnimation('walking')
+        player.mirrorX(-1)
+    }
+    else if (keyDown(RIGHT_ARROW) && player.velocity.x >= 0 && player.velocity.x < MAX_SPEED) {
+        player.velocity.x += 1
+        player.changeAnimation('walking')
+        player.mirrorX(1)
+    }
 
     // "Friction"
     else {
+        player.changeAnimation('still')
         if (player.velocity.x > 2) player.velocity.x -= FRICTION
         else if (player.velocity.x < -2) player.velocity.x += FRICTION
         else player.velocity.x = 0
