@@ -2,6 +2,12 @@
 /// <reference path="./p5.d.ts" />
 /// <reference path="./p5.global-mode.d.ts" />
 
+let MAX_SPEED = 5
+let DASH = 100
+let GRAVITY = 0.4
+let FRICTION = 2
+let JUMP = 10
+
 // Groups
 let blocks
 let tops
@@ -14,15 +20,10 @@ let player
 let canvas
 let showMXY
 let debugCoords = []
-let MAX_SPEED = 10
-let DASH = 100
-let GRAVITY = 0.4
-let FRICTION = 2
-let JUMP = 10
 let LEFT_ARROW_p = false;
 let RIGHT_ARROW_p = false;
 let pressed = new Date().getTime()
-
+let maxSpeed
 
 
 function setup() {
@@ -77,15 +78,15 @@ function draw() {
 
     if (player.collide(lefts) && player.velocity.x > 0) {
         player.velocity.x = 0
-        console.log("left")
+        console.log('left')
     }
     if (player.collide(rights) && player.velocity.x < 0) {
         player.velocity.x = 0
-        console.log("right")
+        console.log('right')
     }
     if (player.collide(bottoms) && player.velocity.y < 0 && !player.collide(lefts) && !player.collide(rights)) {
         player.velocity.y = 0
-        console.log("bottom")
+        console.log('bottom')
     }
     player.collide(blocks)
 
@@ -113,13 +114,13 @@ function draw() {
     // Sprint
     if ((keyDown(LEFT_ARROW) && !LEFT_ARROW_p && player.velocity.x < 0) || (keyDown(RIGHT_ARROW) && !RIGHT_ARROW_p && player.velocity.x > 0)) {
         if (new Date().getTime() < pressed + 500) {
-            MAX_SPEED = DASH;
+            maxSpeed = DASH;
         }
         pressed = new Date().getTime()
     }
 
     if (player.velocity.x === 0) {
-        MAX_SPEED = 10
+        maxSpeed = MAX_SPEED
     }
 
     console.log()
@@ -140,7 +141,7 @@ function draw() {
         if (player.position.x > enemy.position.x) enemy.velocity.x = 2
         
         if (enemy.collide(tops) && enemy.velocity) {
-            if (player.position.y < enemy.position.y) {
+            if (player.position.y + 30 < enemy.position.y) {
                 // Jump
                 enemy.velocity.y = -JUMP
                 enemy.position.y = enemy.position.y - 1
@@ -186,7 +187,7 @@ function draw() {
 
     drawSprites()
 
-    textFont("mono")
+    textFont('mono')
     
     var debug = []
     debug.push(round(getFrameRate()))
@@ -242,7 +243,7 @@ function newBlock(x, y, w, h) {
 
 function displayDebug(array) {
     camera.off()
-    fill("white")
+    fill('white')
     textSize(12)
     for (var i = 0; i < array.length; i++) {
         text(str(array[i]), 8, 20 * (i + 1))
