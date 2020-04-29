@@ -35,7 +35,7 @@ function setup() {
     //players = new Group()
     showMXY = false
 
-    canvas = createCanvas(innerWidth, innerHeight)
+    canvas = createCanvas(1200, 800)
     canvas.mouseOver(MXYon)
     canvas.mouseOut(MXYoff)
 
