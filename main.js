@@ -39,7 +39,9 @@ function setup() {
     newBlock(700, 400, 30, 30)
     newBlock(60, 30, width - 90, 30)
 
-    player = createSprite(100, 400, 30, 30)
+    let img = loadImage('https://raw.githubusercontent.com/AidanRB/summersheep/gravity-swap/images/bad-guy-front.png');
+    player = createSprite(100, 400);
+    player.addImage(img);
 }
 
 
