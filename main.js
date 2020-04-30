@@ -2,14 +2,15 @@
 /// <reference path="./p5.d.ts" />
 /// <reference path="./p5.global-mode.d.ts" />
 
-let MAX_SPEED = 5
-let DASH = 100
+let MAX_SPEED = 10
+let DASH = 30
 let GRAVITY = 0.4
 let FRICTION = 2
 let JUMP = 10
 
 // Groups
 let blocks
+let deathblocks
 let tops
 let bottoms
 let lefts
@@ -28,6 +29,7 @@ let maxSpeed
 
 function setup() {
     blocks = new Group()
+    deathblocks = new Group()
     tops = new Group()
     bottoms = new Group()
     lefts = new Group()
@@ -36,18 +38,19 @@ function setup() {
     //players = new Group()
     showMXY = false
 
-    canvas = createCanvas(1200, 800)
+    canvas = createCanvas(1280, 720)
     canvas.mouseOver(MXYon)
     canvas.mouseOut(MXYoff)
 
-    newBlock(-2, 0, 0, 800)
+    newBlock(-2, 0, 0, 800) // left end of level
     // Create platforms
-    newBlock(0, 600, 800, 30)
-    newBlock(500, 500, 300, 30)
-    newBlock(770, 300, 30, 300)
-    newBlock(700, 400, 30, 30)
+    newBlock(0, 600, 3000, 30) // floor
+    newBlock(500, 500, 300, 30) // platform
+    newBlock(770, 300, 30, 300) // wall
+    newBlock(650, 400, 30, 30)
+    newDeathBlock(800, 580, 300, 20)
 
-    player = createSprite(100, 400, 30, 30)
+    player = createSprite(100, 450, 30, 30)
     sheep_walking_right = loadAnimation('images/sheep/sheeprun001.png', 'images/sheep/sheeprun008.png')
     sheep_standing = loadAnimation('images/sheep/sheeprun001.png')
     player.addAnimation('walking', sheep_walking_right)
@@ -57,8 +60,9 @@ function setup() {
 
 
 function draw() {
-    background(0, 30, 30, 100)
+    background(0, 30, 30)
 
+    // Gravity, jumping, collision with platform tops
     if (player.collide(tops) && player.velocity) {
         if (keyDown(UP_ARROW)) {
             // Jump
@@ -76,6 +80,7 @@ function draw() {
         player.velocity.y += GRAVITY
     }
 
+    // Collisions with platform sides
     if (player.collide(lefts) && player.velocity.x > 0) {
         player.velocity.x = 0
         console.log('left')
@@ -102,7 +107,6 @@ function draw() {
         player.changeAnimation('walking')
         player.mirrorX(1)
     }
-
     // "Friction"
     else {
         player.changeAnimation('still')
@@ -118,24 +122,19 @@ function draw() {
         }
         pressed = new Date().getTime()
     }
-
     if (player.velocity.x === 0) {
         maxSpeed = MAX_SPEED
     }
 
-    console.log()
     LEFT_ARROW_p = keyDown(LEFT_ARROW)
     RIGHT_ARROW_p = keyDown(RIGHT_ARROW)
 
     // Reset dead player
     if (player.position.y > height) {
-        //player.remove()
-        player.position.x = 100
-        player.position.y = 400
-        player.velocity.x = 0
-        player.velocity.y = 0
+        die()
     }
     
+    // Enemy AI
     for (let enemy of enemies) {
         if (player.position.x < enemy.position.x) enemy.velocity.x = -2
         if (player.position.x > enemy.position.x) enemy.velocity.x = 2
@@ -175,20 +174,28 @@ function draw() {
             enemy.remove()
         }
     }
-
     enemies.collide(enemies)
-    if (enemies.collide(player)) {
-        player.position.x = 100
-        player.position.y = 400
-        player.velocity.x = 0
-        player.velocity.y = 0
-        background(255, 0, 0)
+
+    // Die on touching enemies
+    if (player.collide(enemies)) {
+        die()
     }
 
+    if (player.collide(deathblocks)) {
+        die()
+    }
+
+    // Move camera
+    if (player.position.x > 200) {
+        camera.position.x = player.position.x + 440
+    }
+    else {
+        camera.position.x = 640
+    }
+    
     drawSprites()
 
-    textFont('mono')
-    
+    // Debugging
     var debug = []
     debug.push(round(getFrameRate()))
     debug.push(str(round(player.position.x)) + ", " + str(round(player.position.y)))
@@ -198,13 +205,23 @@ function draw() {
     
     displayDebug(debug)
     
+    textFont('sans')
     if (showMXY) text(str(mouseX) + ", " + str(mouseY), mouseX, mouseY)
     for (coord of debugCoords) {
+        textFont('sans')
         text(str(coord[0]) + ", " + str(coord[1]), coord[0], coord[1])
     }
 }
 
 
+
+function die() {
+    player.position.x = 100
+    player.position.y = 450
+    player.velocity.x = 0
+    player.velocity.y = 0
+    background(255, 0, 0)
+}
 
 function mousePressed() {
     //debugCoords.push([mouseX, mouseY]);
@@ -239,12 +256,23 @@ function newBlock(x, y, w, h) {
     right.addToGroup(rights)
 }
 
+/**
+ * @param {number} x
+ * @param {number} w
+ * @param {number} y
+ * @param {number} h
+ */
+function newDeathBlock(x, y, w, h) {
+    let block = createSprite(x + (w / 2), y + (h / 2), w, h)
+    block.addToGroup(deathblocks)
+}
 
 
 function displayDebug(array) {
     camera.off()
     fill('white')
     textSize(12)
+    textFont('monospace')
     for (var i = 0; i < array.length; i++) {
         text(str(array[i]), 8, 20 * (i + 1))
     }
