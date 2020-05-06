@@ -10,6 +10,7 @@ let lefts
 let rights
 //let players
 let player
+let villain
 let canvas
 let showMXY
 let MAX_SPEED = 10
@@ -40,8 +41,19 @@ function setup() {
     newBlock(60, 30, width - 90, 30)
 
     let img = loadImage('https://raw.githubusercontent.com/AidanRB/summersheep/gravity-swap/images/bad-guy-front.png');
+    let img2 = loadImage('https://raw.githubusercontent.com/AidanRB/summersheep/gravity-swap/images/bad-guy-left-1.png');
+    let img3 = loadImage('https://raw.githubusercontent.com/AidanRB/summersheep/gravity-swap/images/bad-guy-left-2.png');
+    let img4 = loadImage('https://raw.githubusercontent.com/AidanRB/summersheep/gravity-swap/images/bad-guy-right.png');
+    let img5 = loadImage('https://raw.githubusercontent.com/AidanRB/summersheep/gravity-swap/images/bad-guy-right-2.png');
+    let img6 = loadImage('https://raw.githubusercontent.com/AidanRB/summersheep/gravity-swap/images/bad-guy-front-down.png');
+    //let anim = loadAnimation('images/bad-guy-left-1', 'images/bad-guy-left-2')
+
     player = createSprite(100, 400);
-    player.addImage(img);
+    player.addImage("up", img);
+    player.addImage("down", img6);
+    villain = createSprite(200, 400);
+    villain.addImage("back", img6);
+    //villain.addImage("left2", img3);
 }
 
 
@@ -58,7 +70,6 @@ function draw() {
             // Stop on ground
             player.velocity.y = 0
         }
-        console.log("top")
     } else {
         // Gravity
         player.velocity.y += GRAVITY
@@ -121,12 +132,23 @@ function draw() {
     if (showMXY) text(str(mouseX) + ", " + str(mouseY), mouseX, mouseY)
 }
 
+var a = 0
+
 function keyTyped() {
     if (key === ' ') {
         var temp = bottoms
         bottoms = tops
         tops = temp
         GRAVITY = -(GRAVITY)
+        //        player.rotate(PI/3.0);
+        if (GRAVITY < 0){
+            player.changeImage("down");
+        } else {
+            player.changeImage("up");
+        }
+
+
+        
     }
 }
 
