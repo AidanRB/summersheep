@@ -51,16 +51,23 @@ function setup() {
     newDeathBlock(800, 580, 300, 20)
 
     player = createSprite(100, 450, 30, 30)
-    sheep_walking_right = loadAnimation('images/sheep/sheeprun001.png', 'images/sheep/sheeprun008.png')
-    sheep_standing = loadAnimation('images/sheep/sheeprun001.png')
+    let sheep_walking_right = loadAnimation('images/sheep/sheeprun001.png', 'images/sheep/sheeprun008.png')
+    let sheep_standing = loadAnimation('images/sheep/sheeprun001.png')
     player.addAnimation('walking', sheep_walking_right)
     player.addAnimation('still', sheep_standing)
+
+    let enemy = createSprite(700, 560, 30, 30)
+    let enemy_walking_left = loadAnimation('images/enemya/enemysprite001.png', 'images/enemya/enemysprite008.png')
+    let enemy_standing = loadAnimation('images/enemya/enemysprite001.png')
+    enemy.addAnimation('walking', enemy_walking_left)
+    enemy.addAnimation('still', enemy_standing)
+    enemy.addToGroup(enemies)
 }
 
 
 
 function draw() {
-    background(0, 30, 30)
+    background(50, 150, 255)
 
     // Gravity, jumping, collision with platform tops
     if (player.collide(tops) && player.velocity) {
@@ -136,14 +143,26 @@ function draw() {
     
     // Enemy AI
     for (let enemy of enemies) {
-        if (player.position.x < enemy.position.x) enemy.velocity.x = -2
-        if (player.position.x > enemy.position.x) enemy.velocity.x = 2
+        if (player.position.x < enemy.position.x - 10) {
+            enemy.velocity.x = -2
+            enemy.changeAnimation('walking')
+            enemy.mirrorX(1)
+        }
+        else if (player.position.x > enemy.position.x + 10) {
+            enemy.velocity.x = 2
+            enemy.changeAnimation('walking')
+            enemy.mirrorX(-1)
+        }
+        else {
+            enemy.velocity.x = 0
+            enemy.changeAnimation('still')
+        }
         
         if (enemy.collide(tops) && enemy.velocity) {
             if (player.position.y + 30 < enemy.position.y) {
                 // Jump
-                enemy.velocity.y = -JUMP
-                enemy.position.y = enemy.position.y - 1
+                //enemy.velocity.y = -JUMP
+                //enemy.position.y = enemy.position.y - 1
             }
             else if (enemy.velocity.y > 0 && !enemy.collide(lefts) && !enemy.collide(rights)) {
                 // Stop on ground
@@ -153,7 +172,7 @@ function draw() {
         }
         else {
             // Gravity
-            enemy.velocity.y += GRAVITY / 2
+            enemy.velocity.y += GRAVITY / 1.8
         }
         
         if (enemy.collide(lefts) && enemy.velocity.x > 0) {
@@ -226,6 +245,10 @@ function die() {
 function mousePressed() {
     //debugCoords.push([mouseX, mouseY]);
     let enemy = createSprite(mouseX, mouseY, 10, 10)
+    let enemy_walking_left = loadAnimation('images/enemya/enemysprite001.png', 'images/enemya/enemysprite008.png')
+    let enemy_standing = loadAnimation('images/enemya/enemysprite001.png')
+    enemy.addAnimation('walking', enemy_walking_left)
+    enemy.addAnimation('still', enemy_standing)
     enemy.addToGroup(enemies)
 }
 
@@ -246,7 +269,7 @@ function MXYoff() {
 function newBlock(x, y, w, h) {
     let block = createSprite(x + (w / 2), y + (h / 2), w, h)
     block.addToGroup(blocks)
-    let top = createSprite(x + (w / 2), y, w - 1, 1)
+    let top = createSprite(x + (w / 2), y - 1, w - 1, 1)
     top.addToGroup(tops)
     let bottom = createSprite(x + (w / 2), y + h, w - 1, 1)
     bottom.addToGroup(bottoms)
