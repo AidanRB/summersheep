@@ -244,7 +244,7 @@ function die() {
 
 function mousePressed() {
     //debugCoords.push([mouseX, mouseY]);
-    let enemy = createSprite(mouseX, mouseY, 10, 10)
+    let enemy = createSprite(mouseX + camera.position.x - width / 2, mouseY, 10, 10)
     let enemy_walking_left = loadAnimation('images/enemya/enemysprite001.png', 'images/enemya/enemysprite008.png')
     let enemy_standing = loadAnimation('images/enemya/enemysprite001.png')
     enemy.addAnimation('walking', enemy_walking_left)
