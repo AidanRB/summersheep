@@ -268,14 +268,19 @@ function MXYoff() {
  */
 function newBlock(x, y, w, h) {
     let block = createSprite(x + (w / 2), y + (h / 2), w, h)
+    block.shapeColor = "rgb(80,60,40)"
     block.addToGroup(blocks)
     let top = createSprite(x + (w / 2), y - 1, w - 1, 1)
+    top.shapeColor = "rgb(32,212,0)"
     top.addToGroup(tops)
     let bottom = createSprite(x + (w / 2), y + h, w - 1, 1)
+    bottom.shapeColor = "rgb(66,49,33)"
     bottom.addToGroup(bottoms)
     let left = createSprite(x - 1, y + (h / 2), 1, h)
+    left.shapeColor = "rgb(66,49,33)"
     left.addToGroup(lefts)
     let right = createSprite(x + w + 1, y + (h / 2), 1, h)
+    right.shapeColor = "rgb(100,75,50)"
     right.addToGroup(rights)
 }
 
