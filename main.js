@@ -48,7 +48,7 @@ function setup() {
     newBlock(500, 500, 300, 30) // platform
     newBlock(770, 300, 30, 300) // wall
     newBlock(650, 400, 30, 30)
-    newDeathBlock(800, 580, 300, 20)
+    newDeathBlock(800, 564, 300)
 
     player = createSprite(100, 450, 30, 30)
     let sheep_walking_right = loadAnimation('images/sheep/sheeprun001.png', 'images/sheep/sheeprun008.png')
@@ -285,9 +285,15 @@ function newBlock(x, y, w, h) {
  * @param {number} y
  * @param {number} h
  */
-function newDeathBlock(x, y, w, h) {
-    let block = createSprite(x + (w / 2), y + (h / 2), w, h)
-    block.addToGroup(deathblocks)
+function newDeathBlock(x, y, w) {
+    let death_block = loadAnimation('images/slip/dangersmall.png')
+    for (let i = 0; i < w; i += 20) {
+        let block = createSprite(x + i + 10, y + 18, 20, 36)
+        block.addAnimation('block', death_block)
+        //block.changeAnimation('block')
+        block.addToGroup(deathblocks)
+        console.log(i)
+    }
 }
 
 
