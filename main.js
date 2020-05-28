@@ -80,7 +80,7 @@ function draw() {
             // Stop on ground
             player.velocity.y = 0
         }
-        console.log("top")
+        //console.log("top")
     }
     else {
         // Gravity
@@ -90,15 +90,15 @@ function draw() {
     // Collisions with platform sides
     if (player.collide(lefts) && player.velocity.x > 0) {
         player.velocity.x = 0
-        console.log('left')
+        //console.log('left')
     }
     if (player.collide(rights) && player.velocity.x < 0) {
         player.velocity.x = 0
-        console.log('right')
+        //console.log('right')
     }
     if (player.collide(bottoms) && player.velocity.y < 0 && !player.collide(lefts) && !player.collide(rights)) {
         player.velocity.y = 0
-        console.log('bottom')
+        //console.log('bottom')
     }
     player.collide(blocks)
 
@@ -292,7 +292,6 @@ function newDeathBlock(x, y, w) {
         block.addAnimation('block', death_block)
         //block.changeAnimation('block')
         block.addToGroup(deathblocks)
-        console.log(i)
     }
 }
 
